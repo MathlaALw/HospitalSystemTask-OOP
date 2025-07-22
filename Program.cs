@@ -42,7 +42,7 @@
         public int Id;
         public string Name;
         public int Age;
-
+        
         public virtual void DisplayInfo()
         {
             Console.WriteLine("Name: " + Name + ", Age: " + Age);
@@ -84,6 +84,16 @@
         public DateTime AppointmentDate;
     }
 
+
+    // Hospital class
+
+    class Hospital
+    {
+        public List<Doctor> Doctors = new List<Doctor>();
+        public List<Patient> Patients = new List<Patient>();
+        public List<Appointment> Appointments = new List<Appointment>();
+
+    }
 
 
 
