@@ -49,6 +49,19 @@
         }
     }
 
+    // Doctor class
+
+    class Doctor : Person
+    {
+        public string Specialization;
+        public List<DateTime> AvailableAppointments = new List<DateTime>();
+
+        public override void DisplayInfo()
+        {
+            Console.WriteLine("Doctor: " + Name + ", Age: " + Age + ", Specialization: " + Specialization);
+        }
+    }
+
 
 
 
