@@ -129,6 +129,68 @@ namespace HospitalSystemTask_OOP
 
 
 
+        public static void BookAppointment()
+        {
+            // view all doctors
+            Console.WriteLine("Available Doctors:");
+            foreach (var doctor in hospital.Doctors)
+            {
+                doctor.DisplayInfo();
+                // view available times for each doctor
+
+
+                Console.WriteLine("Available Times: " + string.Join(", ", doctor.AvailableAppointments));
+            }
+            Console.WriteLine("Choose a doctor to book an appointment.\n");
+            Console.Write("Doctor ID: ");
+            int docId = int.Parse(Console.ReadLine());
+            Doctor doc = hospital.Doctors.Find(d => d.Id == docId);
+            if (doc == null)
+            {
+                Console.WriteLine("Doctor not found.\n");
+                return;
+            }
+            else if (doc.AvailableAppointments.Count == 0)
+            {
+                Console.WriteLine("Doctor has no available appointments.\n");
+                return;
+            }
+
+
+
+            Console.Write("Patient ID: ");
+            int patId = int.Parse(Console.ReadLine());
+            Patient pat = hospital.Patients.Find(p => p.Id == patId);
+
+            Console.Write("Appointment time (yyyy-MM-dd HH:mm): ");
+            DateTime date = DateTime.Parse(Console.ReadLine());
+
+            if (!doc.AvailableAppointments.Contains(date))
+            {
+                Console.WriteLine("Doctor not available at this time.\n");
+                return;
+            }
+
+            bool booked = hospital.Appointments.Exists(a => a.Doctor.Id == docId && a.AppointmentDate == date);
+            if (booked)
+            {
+                Console.WriteLine("Time already booked.\n");
+                return;
+            }
+
+            Appointment appt = new Appointment();
+            appt.AppointmentId = hospital.Appointments.Count + 1;
+            appt.Doctor = doc;
+            appt.Patient = pat;
+            appt.AppointmentDate = date;
+            appt.Status = "Booked";
+            // Remove the booked time from doctor available times
+            doc.AvailableAppointments.Remove(date);
+            hospital.Appointments.Add(appt);
+            Console.WriteLine("Appointment booked.\n");
+        }
+
+       
 
 
 
