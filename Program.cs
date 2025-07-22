@@ -74,6 +74,62 @@ namespace HospitalSystemTask_OOP
         }
 
 
+        public static void AddPatient()
+        {
+            Patient pat = new Patient();
+            Console.Write("Patient ID: ");
+            pat.Id = int.Parse(Console.ReadLine());
+            do
+            {
+                Console.Write("Patient ID : ");
+                string idInput = Console.ReadLine();
+                if (!int.TryParse(idInput, out pat.Id) || pat.Id <= 0)
+                {
+                    Console.WriteLine("Invalid ID. Please enter a positive integer.");
+                }
+            } while (pat.Id <= 0);
+            do
+            {
+                Console.Write("Name: ");
+                pat.Name = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(pat.Name))
+                {
+                    Console.WriteLine("Invalid name. Please enter a non-empty name.");
+                }
+            } while (string.IsNullOrWhiteSpace(pat.Name));
+
+
+
+            do
+            {
+                Console.Write("Age: ");
+                string ageInput = Console.ReadLine();
+                if (!int.TryParse(ageInput, out pat.Age) || pat.Age <= 0)
+                {
+                    Console.WriteLine("Invalid age. Please enter a positive integer.");
+                }
+            } while (pat.Age <= 0);
+
+
+            do
+            {
+                Console.Write("Phone number : ");
+                pat.PhoneNumber = Console.ReadLine();
+                if (pat.PhoneNumber.Length != 8 || !(pat.PhoneNumber.StartsWith("9") || pat.PhoneNumber.StartsWith("7")) || !long.TryParse(pat.PhoneNumber, out _))
+                {
+                    Console.WriteLine("Invalid phone number. Please try again ( should be 8 digits , start with 9 or 7) .");
+                }
+            } while (pat.PhoneNumber.Length != 8 || !(pat.PhoneNumber.StartsWith("9") || pat.PhoneNumber.StartsWith("7")) || !long.TryParse(pat.PhoneNumber, out _));
+
+
+
+            hospital.Patients.Add(pat);
+            Console.WriteLine("Patient added.\n");
+        }
+
+
+
+
 
 
 
