@@ -190,7 +190,13 @@ namespace HospitalSystemTask_OOP
             Console.WriteLine("Appointment booked.\n");
         }
 
-       
+        public static void ShowAppointments()
+        {
+            foreach (var a in hospital.Appointments)
+            {
+                Console.WriteLine("Appointment " + a.AppointmentId + ": Doctor " + a.Doctor.Name + ", Patient " + a.Patient.Name + ", Date: " + a.AppointmentDate);
+            }
+        }
 
 
 
