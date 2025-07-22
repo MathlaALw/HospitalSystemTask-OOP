@@ -62,6 +62,19 @@
         }
     }
 
+    // Patient class
+
+    class Patient : Person
+    {
+        public string PhoneNumber;
+
+        public override void DisplayInfo()
+        {
+            Console.WriteLine("Patient: " + Name + ", Age: " + Age + ", Phone: " + PhoneNumber);
+        }
+    }
+
+   
 
 
 
