@@ -74,7 +74,15 @@
         }
     }
 
-   
+
+    // Appointment class
+    class Appointment
+    {
+        public int AppointmentId;
+        public Doctor Doctor;
+        public Patient Patient;
+        public DateTime AppointmentDate;
+    }
 
 
 
