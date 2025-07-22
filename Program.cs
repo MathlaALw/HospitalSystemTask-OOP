@@ -7,6 +7,13 @@ namespace HospitalSystemTask_OOP
 
         // Create a new Hospital object to manage the system
         static Hospital hospital = new Hospital();
+
+        // save appointments to a file
+        static string appointmentsFilePath = "appointments.txt";
+        static string doctorsFilePath = "doctors.txt";
+        static string patientsFilePath = "patients.txt";
+
+
         static void Main(string[] args)
         {
 
@@ -14,13 +21,16 @@ namespace HospitalSystemTask_OOP
             while (true)
             {
                 
-
+                LoadAppointments();
+                LoadDoctors();
+                LoadPatients();
                 Console.WriteLine("Hospital System Menu");
                 Console.WriteLine("1. Add Doctor");
                 Console.WriteLine("2. Add Patient");
                 Console.WriteLine("3. Book Appointment");
                 Console.WriteLine("4. Show Appointments");
-                Console.WriteLine("5. Exit");
+                Console.WriteLine("5. Search for Appointment by Doctor ID and Date");
+                Console.WriteLine("0. Exit");
                 Console.Write("Choose an option: ");
 
                 string choice = Console.ReadLine();
@@ -32,7 +42,8 @@ namespace HospitalSystemTask_OOP
                     case "2": AddPatient(); break;
                     case "3": BookAppointment(); break;
                     case "4": ShowAppointments(); break;
-                    case "5": return;
+                   // case "5": SearchForAppointment(); break;
+                    case "0": return;
                     default: Console.WriteLine("Invalid option. Try again."); break;
                 }
             }
@@ -70,6 +81,8 @@ namespace HospitalSystemTask_OOP
             }
 
             hospital.Doctors.Add(doc);
+            // Save the doctor to the file
+            SaveDoctors();
             Console.WriteLine("Doctor added.\n");
         }
 
@@ -124,6 +137,8 @@ namespace HospitalSystemTask_OOP
 
 
             hospital.Patients.Add(pat);
+            // Save the patient to the file
+            SavePatients();
             Console.WriteLine("Patient added.\n");
         }
 
@@ -187,6 +202,8 @@ namespace HospitalSystemTask_OOP
             // Remove the booked time from doctor available times
             doc.AvailableAppointments.Remove(date);
             hospital.Appointments.Add(appt);
+            // Save the appointment to the file
+            SaveAppointments();
             Console.WriteLine("Appointment booked.\n");
         }
 
@@ -198,12 +215,133 @@ namespace HospitalSystemTask_OOP
             }
         }
 
+        // Method to save appointments to a file
+        public static void SaveAppointments()
+        {
+            using (StreamWriter writer = new StreamWriter(appointmentsFilePath))
+            {
+                foreach (var a in hospital.Appointments)
+                {
+                    writer.WriteLine($"{a.AppointmentId}|{a.Doctor.Id}|{a.Doctor.Name}|{a.Patient.Id}|{a.Patient.Name}|{a.AppointmentDate}|{a.Status}");
+                }
+            }
+            Console.WriteLine("Appointments saved to file.");
+        }
 
 
 
+        // Method to load appointments from a file
+        public static void LoadAppointments()
+        {
+            if (!File.Exists(appointmentsFilePath))
+            {
+                Console.WriteLine("No appointments file found.");
+                return;
+            }
+            using (StreamReader reader = new StreamReader(appointmentsFilePath))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    var parts = line.Split('|');
+                    if (parts.Length < 7) continue; // Skip invalid lines
+                    Appointment appt = new Appointment
+                    {
+                        AppointmentId = int.Parse(parts[0]),
+                        Doctor = hospital.Doctors.Find(d => d.Id == int.Parse(parts[1])),
+                        Patient = hospital.Patients.Find(p => p.Id == int.Parse(parts[3])),
+                        AppointmentDate = DateTime.Parse(parts[5]),
+                        Status = parts[6]
+                    };
+                    hospital.Appointments.Add(appt);
+                }
+            }
+            Console.WriteLine("Appointments loaded from file.");
+        }
+
+        // Method to save doctors to a file
+        public static void SaveDoctors()
+        {
+            using (StreamWriter writer = new StreamWriter(doctorsFilePath))
+            {
+                foreach (var doctor in hospital.Doctors)
+                {
+                    writer.WriteLine($"{doctor.Id}|{doctor.Name}|{doctor.Age}|{doctor.Specialization}|{string.Join(",", doctor.AvailableAppointments)}");
+                }
+            }
+            Console.WriteLine("Doctors saved to file.");
+        }
+
+        // Method to save pati from a file
+        public static void SavePatients()
+        {
+            using (StreamWriter writer = new StreamWriter(patientsFilePath))
+            {
+                foreach (var patient in hospital.Patients)
+                {
+                    writer.WriteLine($"{patient.Id}|{patient.Name}|{patient.Age}|{patient.PhoneNumber}");
+                }
+            }
+            Console.WriteLine("Patients saved to file.");
+        }
 
 
+        // Method to load doctors from a file
+        public static void LoadDoctors()
+        {
+            if (!File.Exists(doctorsFilePath))
+            {
+                Console.WriteLine("No doctors file found.");
+                return;
+            }
+            using (StreamReader reader = new StreamReader(doctorsFilePath))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    var parts = line.Split('|');
+                    if (parts.Length < 5) continue; // Skip invalid lines
+                    Doctor doc = new Doctor
+                    {
+                        Id = int.Parse(parts[0]),
+                        Name = parts[1],
+                        Age = int.Parse(parts[2]),
+                        Specialization = parts[3],
+                        AvailableAppointments = new List<DateTime>(Array.ConvertAll(parts[4].Split(','), DateTime.Parse))
+                    };
+                    hospital.Doctors.Add(doc);
+                }
+            }
+            Console.WriteLine("Doctors loaded from file.");
+        }
 
+        // Method to load patients from a file
+        public static void LoadPatients()
+        {
+            if (!File.Exists(patientsFilePath))
+            {
+                Console.WriteLine("No patients file found.");
+                return;
+            }
+            using (StreamReader reader = new StreamReader(patientsFilePath))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    var parts = line.Split('|');
+                    if (parts.Length < 4) continue; // Skip invalid lines
+                    Patient pat = new Patient
+                    {
+                        Id = int.Parse(parts[0]),
+                        Name = parts[1],
+                        Age = int.Parse(parts[2]),
+                        PhoneNumber = parts[3]
+                    };
+                    hospital.Patients.Add(pat);
+                }
+            }
+            Console.WriteLine("Patients loaded from file.");
+        }
 
 
 
