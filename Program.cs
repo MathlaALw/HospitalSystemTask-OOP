@@ -291,7 +291,14 @@ namespace HospitalSystemTask_OOP
         {
             Console.Clear();
             Console.WriteLine("Add New Appointment Time for Doctor");
-            Console.Write("Doctor ID: ");
+            // view all doctors
+            Console.WriteLine("Available Doctors:");
+            foreach (var doctor in hospital.Doctors)
+            {
+                doctor.DisplayInfo();
+                
+            }
+            Console.Write("Enter Doctor ID : ");
             int docId = int.Parse(Console.ReadLine());
             Doctor doc = hospital.Doctors.Find(d => d.Id == docId);
             if (doc == null)
@@ -299,6 +306,7 @@ namespace HospitalSystemTask_OOP
                 Console.WriteLine("Doctor not found.\n");
                 return;
             }
+            
             Console.Write("Enter new appointment time (yyyy-MM-dd HH:mm): ");
             DateTime newTime;
             while (!DateTime.TryParse(Console.ReadLine(), out newTime))
@@ -555,7 +563,7 @@ namespace HospitalSystemTask_OOP
 
         public override void DisplayInfo()
         {
-            Console.WriteLine("Doctor ID  "+Id + " ,  Doctor: " + Name +  ", Specialization: " + Specialization);
+            Console.WriteLine("Doctor ID  " + Id + " ,  Doctor: " + Name +  ", Specialization: " + Specialization);
         }
     }
 
