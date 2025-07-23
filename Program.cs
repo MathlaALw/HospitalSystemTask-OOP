@@ -17,19 +17,22 @@ namespace HospitalSystemTask_OOP
         static void Main(string[] args)
         {
 
-           
+            
+            LoadDoctors();
+            LoadPatients();
+            LoadAppointments();
+            Console.Clear();
             while (true)
             {
                 
-                LoadAppointments();
-                LoadDoctors();
-                LoadPatients();
+                
                 Console.WriteLine("Hospital System Menu");
                 Console.WriteLine("1. Add Doctor");
                 Console.WriteLine("2. Add Patient");
                 Console.WriteLine("3. Book Appointment");
                 Console.WriteLine("4. Show Appointments");
-                Console.WriteLine("5. Search for Appointment by Doctor ID and Date");
+                Console.WriteLine("5. Search for Appointment by Patient ID and Date");
+                Console.WriteLine("6. Add New Appointment Time for Doctor");
                 Console.WriteLine("0. Exit");
                 Console.Write("Choose an option: ");
 
@@ -42,7 +45,8 @@ namespace HospitalSystemTask_OOP
                     case "2": AddPatient(); break;
                     case "3": BookAppointment(); break;
                     case "4": ShowAppointments(); break;
-                   // case "5": SearchForAppointment(); break;
+                    case "5": SearchAppointments(); break;
+                    case "6": AddNewAppointmentTimeforDoctor(); break;
                     case "0": return;
                     default: Console.WriteLine("Invalid option. Try again."); break;
                 }
@@ -57,6 +61,8 @@ namespace HospitalSystemTask_OOP
         // Method to add a Doctor
         public static void AddDoctor()
         {
+            Console.Clear();
+            Console.WriteLine("Add New Doctor");
             Doctor doc = new Doctor();
             Console.Write("Doctor ID: ");
             doc.Id = int.Parse(Console.ReadLine());
@@ -89,6 +95,8 @@ namespace HospitalSystemTask_OOP
 
         public static void AddPatient()
         {
+            Console.Clear();
+            Console.WriteLine("Add New Patient");
             Patient pat = new Patient();
             Console.Write("Patient ID: ");
             pat.Id = int.Parse(Console.ReadLine());
@@ -146,6 +154,8 @@ namespace HospitalSystemTask_OOP
 
         public static void BookAppointment()
         {
+            Console.Clear();
+            Console.WriteLine("Book Appointment");
             // view all doctors
             Console.WriteLine("Available Doctors:");
             foreach (var doctor in hospital.Doctors)
@@ -201,6 +211,9 @@ namespace HospitalSystemTask_OOP
             appt.Status = "Booked";
             // Remove the booked time from doctor available times
             doc.AvailableAppointments.Remove(date);
+            // Save the updated doctor to the file
+            SaveDoctors();
+
             hospital.Appointments.Add(appt);
             // Save the appointment to the file
             SaveAppointments();
@@ -209,11 +222,98 @@ namespace HospitalSystemTask_OOP
 
         public static void ShowAppointments()
         {
-            foreach (var a in hospital.Appointments)
+            Console.Clear();
+            Console.WriteLine("Show Appointments");
+            if (hospital.Appointments.Count == 0)
             {
-                Console.WriteLine("Appointment " + a.AppointmentId + ": Doctor " + a.Doctor.Name + ", Patient " + a.Patient.Name + ", Date: " + a.AppointmentDate);
+                Console.WriteLine("No appointments found.\n");
+                return;
             }
+
+            Console.WriteLine("List of Appointments:");
+            
+            for (int i = 0; i < hospital.Appointments.Count; i++)
+            {
+                //var a = hospital.Appointments[i];
+                Console.WriteLine($"Appointment {i + 1}: Doctor {hospital.Appointments[i].Doctor.Name}, Patient {hospital.Appointments[i].Patient.Name}, Date: {hospital.Appointments[i].AppointmentDate:yyyy-MM-dd HH:mm}, Status: {hospital.Appointments[i].Status}");
+            }
+            Console.WriteLine();
+
         }
+
+        // Method to search for an appointment by patient name or date
+        public static void SearchAppointments()
+        {
+            Console.Clear();
+            Console.WriteLine("Search Appointments:");
+            Console.WriteLine("1. By Patient Name");
+            Console.WriteLine("2. By Date");
+            Console.Write("Choose an option: ");
+            string choice = Console.ReadLine();
+
+            if (choice == "1")
+            {
+                Console.Write("Enter patient name to search: ");
+                string name = Console.ReadLine().ToLower();
+                var results = hospital.Appointments.Where(a => a.Patient.Name.ToLower().Contains(name));
+                foreach (var a in results)
+                {
+                    Console.WriteLine($"Appointment {a.AppointmentId}: Doctor {a.Doctor.Name}, Patient {a.Patient.Name}, Date: {a.AppointmentDate}, Status: {a.Status}");
+                }
+            }
+            else if (choice == "2")
+            {
+                Console.Write("Enter date (yyyy-MM-dd): ");
+                if (DateTime.TryParse(Console.ReadLine(), out DateTime searchDate))
+                {
+                    var results = hospital.Appointments.Where(a => a.AppointmentDate.Date == searchDate.Date);
+                    foreach (var a in results)
+                    {
+                        Console.WriteLine($"Appointment {a.AppointmentId}: Doctor {a.Doctor.Name}, Patient {a.Patient.Name}, Date: {a.AppointmentDate}, Status: {a.Status}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Invalid date format.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid option.");
+            }
+            Console.WriteLine();
+        }
+
+        // Method to add a new appointment time for a doctor
+        public static void AddNewAppointmentTimeforDoctor()
+        {
+            Console.Clear();
+            Console.WriteLine("Add New Appointment Time for Doctor");
+            Console.Write("Doctor ID: ");
+            int docId = int.Parse(Console.ReadLine());
+            Doctor doc = hospital.Doctors.Find(d => d.Id == docId);
+            if (doc == null)
+            {
+                Console.WriteLine("Doctor not found.\n");
+                return;
+            }
+            Console.Write("Enter new appointment time (yyyy-MM-dd HH:mm): ");
+            DateTime newTime;
+            while (!DateTime.TryParse(Console.ReadLine(), out newTime))
+            {
+                Console.Write("Invalid format. Try again (yyyy-MM-dd HH:mm): ");
+            }
+            if (doc.AvailableAppointments.Contains(newTime))
+            {
+                Console.WriteLine("This time is already available.\n");
+                return;
+            }
+            doc.AvailableAppointments.Add(newTime);
+            // Save the updated doctor to the file
+            SaveDoctors();
+            Console.WriteLine("New appointment time added for doctor.\n");
+        }
+
 
         // Method to save appointments to a file
         public static void SaveAppointments()
@@ -257,6 +357,44 @@ namespace HospitalSystemTask_OOP
                 }
             }
             Console.WriteLine("Appointments loaded from file.");
+
+            //if (!File.Exists(appointmentsFilePath))
+            //{
+            //    Console.WriteLine("No appointments file found.");
+            //    return;
+            //}
+
+            //using (StreamReader reader = new StreamReader(appointmentsFilePath))
+            //{
+            //    string line;
+            //    while ((line = reader.ReadLine()) != null)
+            //    {
+            //        var parts = line.Split('|');
+            //        if (parts.Length < 7) continue; // Skip invalid lines
+
+            //        // Try to find doctor and patient by ID
+            //        int docId = int.Parse(parts[1]);
+            //        int patId = int.Parse(parts[3]);
+
+            //        Doctor doc = hospital.Doctors.Find(d => d.Id == docId);
+            //        Patient pat = hospital.Patients.Find(p => p.Id == patId);
+
+            //        // If either doctor or patient not found, skip this appointment
+            //        if (doc == null || pat == null) continue;
+
+            //        Appointment appt = new Appointment
+            //        {
+            //            AppointmentId = int.Parse(parts[0]),
+            //            Doctor = doc,
+            //            Patient = pat,
+            //            AppointmentDate = DateTime.Parse(parts[5]),
+            //            Status = parts[6]
+            //        };
+            //        hospital.Appointments.Add(appt);
+            //    }
+            //}
+
+            //Console.WriteLine("Appointments loaded from file.");
         }
 
         // Method to save doctors to a file
