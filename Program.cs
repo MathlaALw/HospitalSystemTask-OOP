@@ -270,6 +270,10 @@ namespace HospitalSystemTask_OOP
                 {
                     Console.WriteLine($"Appointment {a.AppointmentId}: Doctor {a.Doctor.Name}, Patient {a.Patient.Name}, Date: {a.AppointmentDate}, Status: {a.Status}");
                 }
+                if (!results.Any())
+                {
+                    Console.WriteLine("No appointments found for this patient name.");
+                }
             }
             else if (choice == "2")
             {
