@@ -33,6 +33,7 @@ namespace HospitalSystemTask_OOP
                 Console.WriteLine("4. Show Appointments");
                 Console.WriteLine("5. Search for Appointment by Patient ID and Date");
                 Console.WriteLine("6. Add New Appointment Time for Doctor");
+                Console.WriteLine("7. View All Appointment Times for Doctor");
                 Console.WriteLine("0. Exit");
                 Console.Write("Choose an option: ");
 
@@ -47,6 +48,7 @@ namespace HospitalSystemTask_OOP
                     case "4": ShowAppointments(); break;
                     case "5": SearchAppointments(); break;
                     case "6": AddNewAppointmentTimeforDoctor(); break;
+                    case "7": ViewAllAppointmentsTimesForDoctor(); break;
                     case "0": return;
                     default: Console.WriteLine("Invalid option. Try again."); break;
                 }
@@ -312,6 +314,45 @@ namespace HospitalSystemTask_OOP
             // Save the updated doctor to the file
             SaveDoctors();
             Console.WriteLine("New appointment time added for doctor.\n");
+        }
+
+
+        // Method to view all appointment times for a doctor
+        public static void ViewAllAppointmentsTimesForDoctor()
+        {
+            Console.Clear();
+            Console.WriteLine("View All Appointment Times for Doctor");
+            Console.Write("Doctor ID: ");
+            int docId = int.Parse(Console.ReadLine());
+            Doctor doc = hospital.Doctors.Find(d => d.Id == docId);
+            if (doc == null)
+            {
+                Console.WriteLine("Doctor not found.\n");
+                return;
+            }
+            if (doc.AvailableAppointments.Count == 0)
+            {
+                Console.WriteLine("No available appointment times for this doctor.\n");
+                return;
+            }
+            Console.WriteLine("Available Appointment Times:");
+            foreach (var time in doc.AvailableAppointments)
+            {
+                Console.WriteLine(time.ToString("yyyy-MM-dd HH:mm"));
+            }
+            if (hospital.Appointments.Count > 0)
+            {
+                Console.WriteLine("Booked Appointment Times:");
+                foreach (var appt in hospital.Appointments.Where(a => a.Doctor.Id == docId))
+                {
+                    Console.WriteLine($"{appt.AppointmentDate:yyyy-MM-dd HH:mm} - {appt.Status}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No booked appointments for this doctor.");
+            }
+            Console.WriteLine();
         }
 
 
