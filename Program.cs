@@ -24,14 +24,14 @@ namespace HospitalSystemTask_OOP
             Console.Clear();
             while (true)
             {
-                
-                
+
+                Console.Clear();
                 Console.WriteLine("Hospital System Menu");
                 Console.WriteLine("1. Add Doctor");
                 Console.WriteLine("2. Add Patient");
                 Console.WriteLine("3. Book Appointment");
                 Console.WriteLine("4. Show Appointments");
-                Console.WriteLine("5. Search for Appointment by Patient ID and Date");
+                Console.WriteLine("5. Search for Appointment by Patient Name and Date");
                 Console.WriteLine("6. Add New Appointment Time for Doctor");
                 Console.WriteLine("7. View All Appointment Times for Doctor");
                 Console.WriteLine("0. Exit");
@@ -92,6 +92,8 @@ namespace HospitalSystemTask_OOP
             // Save the doctor to the file
             SaveDoctors();
             Console.WriteLine("Doctor added.\n");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
         }
 
 
@@ -150,6 +152,8 @@ namespace HospitalSystemTask_OOP
             // Save the patient to the file
             SavePatients();
             Console.WriteLine("Patient added.\n");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
         }
 
 
@@ -220,6 +224,8 @@ namespace HospitalSystemTask_OOP
             // Save the appointment to the file
             SaveAppointments();
             Console.WriteLine("Appointment booked.\n");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
         }
 
         public static void ShowAppointments()
@@ -240,6 +246,8 @@ namespace HospitalSystemTask_OOP
                 Console.WriteLine($"Appointment {i + 1}: Doctor {hospital.Appointments[i].Doctor.Name}, Patient {hospital.Appointments[i].Patient.Name}, Date: {hospital.Appointments[i].AppointmentDate:yyyy-MM-dd HH:mm}, Status: {hospital.Appointments[i].Status}");
             }
             Console.WriteLine();
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
 
         }
 
@@ -273,6 +281,10 @@ namespace HospitalSystemTask_OOP
                     {
                         Console.WriteLine($"Appointment {a.AppointmentId}: Doctor {a.Doctor.Name}, Patient {a.Patient.Name}, Date: {a.AppointmentDate}, Status: {a.Status}");
                     }
+                    if (!results.Any())
+                    {
+                        Console.WriteLine("No appointments found for this date.");
+                    }
                 }
                 else
                 {
@@ -284,6 +296,9 @@ namespace HospitalSystemTask_OOP
                 Console.WriteLine("Invalid option.");
             }
             Console.WriteLine();
+
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
         }
 
         // Method to add a new appointment time for a doctor
@@ -322,6 +337,10 @@ namespace HospitalSystemTask_OOP
             // Save the updated doctor to the file
             SaveDoctors();
             Console.WriteLine("New appointment time added for doctor.\n");
+
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
+
         }
 
 
@@ -361,6 +380,9 @@ namespace HospitalSystemTask_OOP
                 Console.WriteLine("No booked appointments for this doctor.");
             }
             Console.WriteLine();
+
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
         }
 
 
